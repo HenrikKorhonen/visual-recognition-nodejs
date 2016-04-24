@@ -206,7 +206,7 @@ app.post('/api/classify', app.upload.single('images_file'), function(req, res, n
     if (req.query.classifier_id) {
       var vparams = {
         images_file: file,
-        classifier_ids: [req.query.classifier_id]
+        classifier_ids: {"classifier_ids":["healthy_1284792283", "diseased_372160759"]}
       };
 
       visualRecognition.classify(vparams, function(err, results) {
