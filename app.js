@@ -49,13 +49,13 @@ require('./config/express')(app);
 // Create the service wrapper
 var visualRecognition = watson.visual_recognition({
   version: 'v2-beta',
-  username: '<username>',
-  password: '<password>',
+  username: '1066f4da-28ff-4a5b-b43c-eae93de1abf1',
+  password: 'VlxLiPzlT1Yc',
   version_date:'2015-12-02'
 });
 
 var alchemyVision = watson.alchemy_vision({
-  api_key: process.env.ALCHEMY_KEY || '<alchemy-key>'
+  api_key: process.env.ALCHEMY_KEY || 'ddc9cfe0a112f517b024883b76fdc99aeed094ab'
 });
 
 
@@ -83,14 +83,26 @@ app.get('/test', function(req, res) {
   });
 });
 
+app.get('/api/classifiers/', function(req,res) {
+	visualRecognition.listClassifiers({},
+	function(err, response) {
+	 if (err)
+		console.log(err);
+	 else
+		console.log(JSON.stringify(response, null, 2));
+	}
+);
+})
+
 /**
  * Filter users created classifier from 'result'. If 'classifier_ids' is specified
  * they won't be filtered
  * @param  {Object} result        The result of calling 'classify()'
- * @param  {Array} classifier_ids The user created classifier ids
+ * @param  {Array} classifier_ids The user created classifier ids 
  * @return {Object}               The filtered 'result'
  */
 function filterUserCreatedClassifier(result, classifier_ids) {
+  return result;
   var ids = classifier_ids || [];
   if (result && result.images) {
     result.images.forEach(function(image) {
@@ -102,7 +114,7 @@ function filterUserCreatedClassifier(result, classifier_ids) {
         });
     });
   }
-  return result;
+  
 }
 
 /**
@@ -195,6 +207,7 @@ app.post('/api/classifiers', function(req, res, next) {
   });
 });
 
+
 /**
  * Classifies an image
  * @param req.body.url The URL for an image either.
@@ -206,7 +219,7 @@ app.post('/api/classify', app.upload.single('images_file'), function(req, res, n
     if (req.query.classifier_id) {
       var vparams = {
         images_file: file,
-        classifier_ids: {"classifier_ids":["healthy_1284792283", "diseased_372160759"]}
+        classifier_ids: [req.query.classifier_id]
       };
 
       visualRecognition.classify(vparams, function(err, results) {
